@@ -6,44 +6,73 @@ import {
   View,
   ScrollView
 } from 'react-native';
-import { Card, ListItem, Button } from 'react-native-elements'
+import { Card, SearchBar } from 'react-native-elements'
+import _ from 'lodash'
+import uuid from 'uuid/v4'
 import data from '../data/byte_edition.json'
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     title: 'Editions',
+    headerTintColor: '#fff',
+    headerStyle: {
+      backgroundColor: '#613c8c'
+    },
+    headerTitleStyle: {
+      fontSize: 24
+    }
   };
+
+  constructor(){
+    super()
+    this.state = {
+      search_val: ''
+    }
+    this.updateSearch=this.updateSearch.bind(this)
+  }
+
+  updateSearch(value) {
+    this.setState({
+      search_val: value
+    })
+  }
 
   componentDidMount() {
     // console.log(data)
   }
 
   renderCards() {
-    let render_cards = []
-    for (let key in data) {
-      let year_editions = data[key]
-      for (let year in year_editions) {
-        let edition = year_editions[year]
-        render_cards.push(<Card title={year} key={year}>
+    let { search_val } = this.state
+
+    let render_cards = _.map(data, edition => {
+      let is_valid = true
+
+      if (search_val !== '' && edition['title'].indexOf(search_val) === -1) {
+        is_valid = false
+      }
+
+      if (is_valid) {
+        return (<Card title={edition['title']} key={uuid()}>
           <View>
-            <Text>{edition['main-content']}</Text>
-            <Button onPress={() => this.props.navigation.navigate('edition', {edition})}>Read more</Button>
+            <Text>{edition['header']}</Text>
+            <Text onPress={() => this.props.navigation.navigate('edition', { edition })}>Read more</Text>
           </View>
         </Card>)
       }
-    }
+    })
     return render_cards
   }
 
   render() {
-    const users = [{
-      name: 'brynn',
-      avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
-    }]
 
     return (
       <View style={styles.container}>
         <ScrollView>
+          <SearchBar
+            placeholder="Search the edition here..."
+            onChangeText={this.updateSearch}
+          // value={search}
+          />
           {this.renderCards()}
         </ScrollView>
       </View>

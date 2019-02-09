@@ -6,6 +6,7 @@ import {
   View,
   ScrollView
 } from 'react-native';
+import SectionHeader from '../components/Section_Header'
 
 export default class EditionScreen extends React.Component {
   static navigationOptions = {
@@ -14,10 +15,13 @@ export default class EditionScreen extends React.Component {
 
   render() {
       let {edition}=this.props.navigation.state.params
+      // console.log(edition)
     return (
       <View style={styles.container}>
         <ScrollView>
-            <Text>{edition['main-content']}</Text>
+            <Text>{edition.title}</Text>
+            <Text>{edition.content}</Text>
+            {edition.news.title ? <SectionHeader title={edition.news.title} /> : ''}
         </ScrollView>
       </View>
     );
@@ -28,6 +32,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    padding: 15
   },
   codeHighlightText: {
     color: 'rgba(96,100,109, 0.8)',
